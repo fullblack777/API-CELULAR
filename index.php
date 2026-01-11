@@ -1,6 +1,5 @@
 <?php
 // CYBERCEL - Página Inicial
-header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -11,157 +10,130 @@ header('Content-Type: text/html; charset=utf-8');
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: #0f172a;
             color: white; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        header { text-align: center; margin-bottom: 40px; padding: 30px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 40px; padding: 30px 0; }
         h1 { 
-            font-size: 3.5rem; 
-            background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0);
+            font-size: 3rem; 
+            background: linear-gradient(90deg, #ff0080, #ff8c00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 0, 128, 0.5);
             margin-bottom: 10px;
         }
-        .subtitle { color: #40e0d0; font-size: 1.2rem; opacity: 0.9; }
+        .subtitle { color: #60a5fa; font-size: 1.2rem; margin-bottom: 20px; }
         .card { 
-            background: rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 30px;
+            background: #1e293b; 
+            border-radius: 10px;
+            padding: 25px;
             margin-bottom: 25px;
+            border: 1px solid #334155;
         }
-        h2 { color: #ff8c00; margin-bottom: 20px; border-left: 4px solid #ff0080; padding-left: 15px; }
+        h2 { color: #ff8c00; margin-bottom: 20px; }
         .api-url { 
-            background: rgba(0, 0, 0, 0.5); 
+            background: #0f172a; 
             padding: 15px; 
             border-radius: 8px;
             font-family: 'Courier New', monospace;
             margin: 15px 0;
             overflow-x: auto;
-            border: 1px solid #40e0d0;
+            border: 1px solid #475569;
+            color: #7dd3fc;
         }
-        .test-area { margin-top: 30px; }
+        .test-area { margin: 30px 0; }
         input { 
             width: 100%; 
-            padding: 15px; 
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #40e0d0;
+            padding: 12px; 
+            background: #0f172a;
+            border: 2px solid #475569;
             border-radius: 8px;
             color: white;
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 15px;
         }
+        input:focus { outline: none; border-color: #60a5fa; }
         button { 
-            background: linear-gradient(90deg, #ff0080, #ff8c00);
+            background: #3b82f6; 
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 12px 24px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            transition: transform 0.3s;
-            font-weight: bold;
+            margin-right: 10px;
+            transition: background 0.3s;
         }
-        button:hover { transform: translateY(-3px); }
-        #result { margin-top: 30px; }
+        button:hover { background: #2563eb; }
+        button.full { background: linear-gradient(90deg, #ff8c00, #ef4444); }
+        button.full:hover { background: linear-gradient(90deg, #ea580c, #dc2626); }
+        #result { margin-top: 20px; }
         .response { 
-            background: rgba(0, 0, 0, 0.7); 
+            background: #0f172a; 
             padding: 20px; 
-            border-radius: 10px;
-            border: 1px solid #ff8c00;
+            border-radius: 8px;
+            border: 1px solid #475569;
             max-height: 500px;
             overflow-y: auto;
+            margin-top: 15px;
         }
+        pre { 
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #cbd5e1;
+        }
+        .loading { color: #60a5fa; text-align: center; padding: 30px; }
+        .error { color: #ef4444; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 8px; }
+        .success { color: #10b981; padding: 15px; background: rgba(16,185,129,0.1); border-radius: 8px; }
         .endpoint { 
-            background: rgba(64, 224, 208, 0.1);
-            border-left: 4px solid #40e0d0;
+            background: rgba(59, 130, 246, 0.1);
             padding: 15px;
             margin: 15px 0;
-            border-radius: 0 8px 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
         }
         .method { 
             display: inline-block; 
-            padding: 5px 15px; 
-            background: #ff0080; 
+            padding: 5px 10px; 
+            background: #3b82f6; 
             color: white; 
             border-radius: 5px;
             margin-right: 10px;
             font-weight: bold;
         }
-        .method.get { background: #40e0d0; }
-        .method.post { background: #ff8c00; }
+        .method.get { background: #10b981; }
+        .method.post { background: #f59e0b; }
         footer { 
             text-align: center; 
-            margin-top: 50px; 
+            margin-top: 40px; 
             padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            color: #aaa;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
         }
-        .highlight { color: #ff8c00; font-weight: bold; }
-        .status { 
-            padding: 10px; 
-            border-radius: 5px; 
-            margin: 10px 0;
-            display: inline-block;
-        }
-        .status.success { background: rgba(64, 224, 208, 0.2); color: #40e0d0; }
-        .status.error { background: rgba(255, 0, 128, 0.2); color: #ff0080; }
-        .loading { 
-            text-align: center; 
-            padding: 30px; 
-            color: #40e0d0;
-            font-size: 18px;
-        }
+        .highlight { color: #fbbf24; }
+        .code-block { background: #1e293b; padding: 15px; border-radius: 8px; margin: 15px 0; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🔍 CYBERCEL API</h1>
-            <p class="subtitle">API de Busca Telefônica Completa</p>
-            <p>Obtenha informações detalhadas sobre qualquer número telefônico</p>
+            <p class="subtitle">API de Busca Telefônica Inteligente</p>
+            <p>Obtenha informações detalhadas sobre qualquer número telefônico brasileiro</p>
         </header>
         
         <div class="card">
-            <h2>🌐 API Endpoints</h2>
-            
-            <div class="endpoint">
-                <span class="method get">GET</span>
-                <strong>Busca Básica</strong>
-                <div class="api-url" id="url-basic"></div>
-                <p>Retorna informações básicas do número</p>
-            </div>
-            
-            <div class="endpoint">
-                <span class="method get">GET</span>
-                <strong>Busca Completa</strong>
-                <div class="api-url" id="url-full"></div>
-                <p>Retorna todas as informações disponíveis</p>
-            </div>
-            
-            <div class="endpoint">
-                <span class="method post">POST</span>
-                <strong>Busca via POST</strong>
-                <div class="api-url">POST /api.php</div>
-                <pre style="color: #aaa; margin-top: 10px;">{
-    "numero": "11999999999",
-    "full": true
-}</pre>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>🧪 Testar API</h2>
+            <h2>🚀 Testar API</h2>
             <div class="test-area">
                 <input type="text" id="phoneInput" placeholder="Digite o número com DDD (ex: 11999999999)" value="11999999999">
                 <div>
                     <button onclick="testAPI(false)">Busca Básica</button>
-                    <button onclick="testAPI(true)" style="margin-left: 10px; background: linear-gradient(90deg, #ff8c00, #40e0d0);">Busca Completa</button>
+                    <button onclick="testAPI(true)" class="full">Busca Completa</button>
+                    <button onclick="clearResult()" style="background: #6b7280;">Limpar</button>
                 </div>
                 
                 <div id="result"></div>
@@ -169,132 +141,191 @@ header('Content-Type: text/html; charset=utf-8');
         </div>
         
         <div class="card">
-            <h2>📚 Exemplos de Integração</h2>
+            <h2>🌐 Endpoints da API</h2>
             
-            <h3 style="color: #40e0d0; margin-top: 20px;">JavaScript:</h3>
-            <div class="api-url">
-                fetch('<?php echo $_SERVER['HTTP_HOST']; ?>/api.php?numero=11999999999')
-                    .then(response => response.json())
-                    .then(data => console.log(data));
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <strong>Busca Básica</strong>
+                <div class="api-url" id="url-basic"></div>
+                <p>Retorna informações essenciais do número</p>
             </div>
             
-            <h3 style="color: #40e0d0; margin-top: 20px;">Python:</h3>
-            <div class="api-url">
-                import requests<br>
-                response = requests.get('<?php echo $_SERVER['HTTP_HOST']; ?>/api.php?numero=11999999999')<br>
-                data = response.json()
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <strong>Busca Completa</strong>
+                <div class="api-url" id="url-full"></div>
+                <p>Retorna todos os dados disponíveis (inclui redes sociais, vazamentos, etc.)</p>
             </div>
             
-            <h3 style="color: #40e0d0; margin-top: 20px;">PHP:</h3>
-            <div class="api-url">
-                $response = file_get_contents('https://<?php echo $_SERVER['HTTP_HOST']; ?>/api.php?numero=11999999999');<br>
-                $data = json_decode($response, true);
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <strong>Busca via POST</strong>
+                <div class="api-url">POST /api.php</div>
+                <div class="code-block">
+<pre>{
+    "numero": "11999999999",
+    "full": true
+}</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>📚 Exemplos de Uso</h2>
+            
+            <h3 style="color: #60a5fa; margin: 20px 0 10px 0;">JavaScript:</h3>
+            <div class="code-block">
+<pre>fetch('<?php echo ($_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/api.php?numero=11999999999')
+    .then(response => response.json())
+    .then(data => console.log(data));</pre>
             </div>
             
-            <h3 style="color: #40e0d0; margin-top: 20px;">cURL:</h3>
-            <div class="api-url">
-                curl "https://<?php echo $_SERVER['HTTP_HOST']; ?>/api.php?numero=11999999999"
+            <h3 style="color: #60a5fa; margin: 20px 0 10px 0;">Python:</h3>
+            <div class="code-block">
+<pre>import requests
+
+response = requests.get('<?php echo ($_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/api.php?numero=11999999999')
+data = response.json()
+print(data)</pre>
+            </div>
+            
+            <h3 style="color: #60a5fa; margin: 20px 0 10px 0;">PHP:</h3>
+            <div class="code-block">
+<pre>$json = file_get_contents('<?php echo ($_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/api.php?numero=11999999999');
+$data = json_decode($json, true);
+print_r($data);</pre>
+            </div>
+            
+            <h3 style="color: #60a5fa; margin: 20px 0 10px 0;">cURL:</h3>
+            <div class="code-block">
+<pre>curl "<?php echo ($_SERVER['HTTPS'] ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?>/api.php?numero=11999999999"</pre>
             </div>
         </div>
         
         <div class="card">
             <h2>📊 Dados Retornados</h2>
-            <ul style="list-style: none; line-height: 2;">
+            <ul style="list-style: none; margin-left: 20px;">
                 <li>✅ <span class="highlight">Operadora</span> - Detecção automática</li>
-                <li>✅ <span class="highlight">Localização</span> - Cidade/Estado por DDD</li>
-                <li>✅ <span class="highlight">Dados de Registro</span> - Informações do titular</li>
+                <li>✅ <span class="highlight">Localização</span> - Cidade e Estado por DDD</li>
+                <li>✅ <span class="highlight">Dados do Titular</span> - Nome, CPF, email</li>
                 <li>✅ <span class="highlight">Redes Sociais</span> - Possíveis associações</li>
-                <li>✅ <span class="highlight">Vazamentos</span> - Verificação de segurança</li>
+                <li>✅ <span class="highlight">Verificação de Vazamentos</span> - Segurança</li>
                 <li>✅ <span class="highlight">Histórico</span> - Eventos da linha</li>
-                <li>✅ <span class="highlight">Associações</span> - Números relacionados</li>
+                <li>✅ <span class="highlight">Números Associados</span> - Contatos relacionados</li>
                 <li>✅ <span class="highlight">Geolocalização</span> - Coordenadas aproximadas</li>
             </ul>
         </div>
         
         <footer>
-            <p>CYBERCEL API v1.0 - Busca Telefônica Inteligente</p>
-            <p>Desenvolvido para integrações e consultas profissionais</p>
-            <p style="margin-top: 20px; font-size: 0.9rem; color: #777;">
-                Esta API retorna dados gerados para fins de demonstração.<br>
+            <p>CYBERCEL API v1.0 - Busca Telefônica Completa</p>
+            <p>API desenvolvida para integrações e consultas profissionais</p>
+            <p style="margin-top: 20px; font-size: 0.9em; color: #6b7280;">
+                Esta API retorna dados gerados para fins de demonstração e desenvolvimento.<br>
                 Para uso em produção, contate-nos.
             </p>
         </footer>
     </div>
     
     <script>
-        // Atualizar URLs dinâmicas
+        // URL base
         const baseUrl = window.location.origin;
         document.getElementById('url-basic').textContent = `${baseUrl}/api.php?numero=11999999999`;
         document.getElementById('url-full').textContent = `${baseUrl}/api.php?numero=11999999999&full=true`;
         
-        // Função para testar API
+        // Testar API
         async function testAPI(full) {
-            const phoneInput = document.getElementById('phoneInput').value;
+            const phoneInput = document.getElementById('phoneInput').value.trim();
             const resultDiv = document.getElementById('result');
             
+            // Validar número
             if (!phoneInput || phoneInput.length < 10) {
-                resultDiv.innerHTML = `<div class="status error">⚠ Digite um número válido com DDD</div>`;
+                resultDiv.innerHTML = `<div class="error">⚠ Digite um número válido com DDD (ex: 11999999999)</div>`;
+                return;
+            }
+            
+            // Limpar caracteres não numéricos
+            const numeroLimpo = phoneInput.replace(/\D/g, '');
+            if (numeroLimpo.length < 10 || numeroLimpo.length > 11) {
+                resultDiv.innerHTML = `<div class="error">⚠ Número inválido. Use DDD + 8 ou 9 dígitos</div>`;
                 return;
             }
             
             // Mostrar loading
             resultDiv.innerHTML = `<div class="loading">
                 🔍 Buscando informações para ${phoneInput}...
-                <br><small>Aguarde, isso pode levar alguns segundos</small>
+                <br><small>Aguarde enquanto consultamos nossos sistemas...</small>
             </div>`;
             
             try {
-                const url = `${baseUrl}/api.php?numero=${encodeURIComponent(phoneInput)}${full ? '&full=true' : ''}`;
+                const url = `${baseUrl}/api.php?numero=${encodeURIComponent(numeroLimpo)}${full ? '&full=true' : ''}`;
+                console.log('URL:', url);
+                
                 const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const data = await response.json();
                 
-                // Formatar JSON bonito
+                // Formatar JSON
                 const jsonStr = JSON.stringify(data, null, 2);
                 
-                // Syntax highlighting básico
-                const highlighted = jsonStr
-                    .replace(/(".*?"):/g, '<span style="color: #40e0d0;">$1</span>:')
-                    .replace(/(".*?")/g, '<span style="color: #ff8c00;">$1</span>')
-                    .replace(/\b(true|false|null)\b/g, '<span style="color: #ff0080;">$1</span>')
-                    .replace(/\b(\d+)\b/g, '<span style="color: #40e0d0;">$1</span>');
+                // Destacar status
+                let statusHtml = '';
+                if (data.status === 'success' || data.status === 'successo') {
+                    statusHtml = `<div class="success">✅ Busca realizada com sucesso!</div>`;
+                } else if (data.status === 'error') {
+                    statusHtml = `<div class="error">❌ ${data.message || 'Erro na busca'}</div>`;
+                }
                 
                 resultDiv.innerHTML = `
-                    <div class="status success">✅ Busca realizada com sucesso!</div>
+                    ${statusHtml}
                     <div class="response">
-                        <pre style="color: #fff;">${highlighted}</pre>
+                        <pre>${jsonStr}</pre>
                     </div>
                     <div style="margin-top: 15px;">
                         <button onclick="copyToClipboard('${jsonStr.replace(/'/g, "\\'")}')">
                             📋 Copiar JSON
                         </button>
-                        <button onclick="downloadJSON(${JSON.stringify(data)}, 'cybercel_${phoneInput}.json')" 
-                                style="margin-left: 10px; background: linear-gradient(90deg, #40e0d0, #ff0080);">
+                        <button onclick="downloadJSON('${jsonStr.replace(/'/g, "\\'")}', 'cybercel_${numeroLimpo}.json')"
+                                style="background: #10b981; margin-left: 10px;">
                             💾 Download JSON
                         </button>
                     </div>
                 `;
                 
             } catch (error) {
-                resultDiv.innerHTML = `<div class="status error">❌ Erro: ${error.message}</div>`;
+                resultDiv.innerHTML = `<div class="error">❌ Erro: ${error.message}</div>`;
+                console.error('Erro:', error);
             }
         }
         
-        // Função para copiar para clipboard
+        // Copiar para clipboard
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 alert('✅ JSON copiado para clipboard!');
+            }).catch(err => {
+                alert('❌ Erro ao copiar: ' + err.message);
             });
         }
         
-        // Função para download JSON
-        function downloadJSON(data, filename) {
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        // Download JSON
+        function downloadJSON(jsonStr, filename) {
+            const blob = new Blob([jsonStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+        
+        // Limpar resultados
+        function clearResult() {
+            document.getElementById('result').innerHTML = '';
         }
         
         // Permitir Enter para buscar
