@@ -1,19 +1,13 @@
 FROM php:8.2-apache
 
-# Ativar módulos necessários
-RUN a2enmod rewrite headers
-
-# Instalar dependências básicas
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Configuração do Apache
+# Copiar arquivos
 COPY . /var/www/html/
 
-# Permissões
+# Dar permissão ao Apache
 RUN chown -R www-data:www-data /var/www/html
 
+# Porta
 EXPOSE 80
 
+# Comando para iniciar
 CMD ["apache2-foreground"]
