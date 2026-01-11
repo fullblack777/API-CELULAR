@@ -1,0 +1,14 @@
+{
+    "name": "cybercel/api",
+    "description": "API de busca telefônica completa",
+    "type": "project",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "files": ["busca.php"]
+    },
+    "scripts": {
+        "start": "php -S 0.0.0.0:8080"
+    }
+}
