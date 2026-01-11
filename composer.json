@@ -1,6 +1,6 @@
 {
-    "name": "cybercel/api",
-    "description": "API de busca telefônica",
+    "name": "cybercel-real/api",
+    "description": "API de busca telefônica com dados reais",
     "type": "project",
     "require": {
         "php": ">=7.4"
