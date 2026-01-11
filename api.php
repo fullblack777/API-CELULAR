@@ -1,10 +1,12 @@
 <?php
-header('Content-Type: application/json');
+// CYBERCEL API v1.0
+// Headers CORS - FAZER VIA PHP (não .htaccess)
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Content-Type: application/json; charset=utf-8');
 
-// CORS
+// CORS preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -13,21 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Incluir lógica de busca
 require_once 'busca.php';
 
-// Configurações
-$API_KEY = 'CYBERCEL_API_v1_' . date('Ymd');
-$RATE_LIMIT = 10; // Requisições por minuto
-
-// Verificar chave API (opcional)
-$headers = getallheaders();
-$client_key = $headers['Authorization'] ?? $_GET['api_key'] ?? '';
-
 // Rate limiting
 session_start();
-$ip = $_SERVER['REMOTE_ADDR'];
+$ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+$RATE_LIMIT = 20;
 $current_time = time();
 $requests = $_SESSION['requests'][$ip] ?? [];
 
-// Limpar requisições antigas
+// Limpar requisições antigas (último minuto)
 $requests = array_filter($requests, function($time) use ($current_time) {
     return $time > $current_time - 60;
 });
@@ -37,9 +32,9 @@ if (count($requests) >= $RATE_LIMIT) {
     http_response_code(429);
     echo json_encode([
         'status' => 'error',
-        'message' => 'Rate limit exceeded. Max ' . $RATE_LIMIT . ' requests per minute.',
+        'message' => "Rate limit exceeded. Max $RATE_LIMIT requests per minute.",
         'retry_after' => 60
-    ]);
+    ], JSON_PRETTY_PRINT);
     exit();
 }
 
@@ -52,29 +47,28 @@ $numero = $_GET['numero'] ?? $_GET['phone'] ?? $_GET['celular'] ?? '';
 
 // Se não tiver número, mostrar info da API
 if (empty($numero)) {
-    $host = $_SERVER['HTTP_HOST'];
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     
     echo json_encode([
         'api_name' => 'CYBERCEL API v1.0',
         'description' => 'API de busca de informações telefônicas',
+        'version' => '1.0.0',
+        'status' => 'online',
+        'timestamp' => date('Y-m-d H:i:s'),
         'endpoints' => [
             'GET' => [
-                'busca_telefone' => $protocol . '://' . $host . '/api.php?numero=11999999999',
-                'busca_completa' => $protocol . '://' . $host . '/api.php?numero=11999999999&full=true'
-            ],
-            'POST' => [
-                'url' => $protocol . '://' . $host . '/api.php',
-                'body' => ['numero' => '11999999999']
+                'busca_basica' => "$protocol://$host/api.php?numero=11999999999",
+                'busca_completa' => "$protocol://$host/api.php?numero=11999999999&full=true"
             ]
         ],
         'parameters' => [
             'numero' => 'Número com DDD (ex: 11999999999)',
-            'full' => 'true/false - Retorna busca completa'
+            'full' => 'true/false - Retorna todos os dados disponíveis'
         ],
-        'rate_limit' => $RATE_LIMIT . ' requests/minuto',
-        'version' => '1.0.0',
-        'author' => 'CYBERCEL API'
+        'rate_limit' => "$RATE_LIMIT requests/minuto",
+        'author' => 'CYBERCEL API',
+        'documentation' => "$protocol://$host/"
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
 }
@@ -84,10 +78,10 @@ $numero = preg_replace('/[^0-9]/', '', $numero);
 if (strlen($numero) < 10 || strlen($numero) > 11) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'Número inválido. Use formato: DDD + Número (ex: 11999999999)',
+        'message' => 'Número inválido. Use formato: DDD + Número (8 ou 9 dígitos)',
         'received' => $numero,
-        'expected_format' => 'DDD + 8 ou 9 dígitos'
-    ]);
+        'example' => '11999999999 ou 1133334444'
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
 }
 
@@ -105,7 +99,7 @@ try {
         'api' => 'CYBERCEL',
         'version' => '1.0',
         'timestamp' => date('Y-m-d H:i:s'),
-        'request_id' => uniqid('CYB_'),
+        'request_id' => 'CYB_' . uniqid(),
         'processing_time' => round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 3) . 's'
     ];
     
@@ -118,6 +112,6 @@ try {
         'message' => 'Erro interno na busca',
         'error' => $e->getMessage(),
         'timestamp' => date('Y-m-d H:i:s')
-    ]);
+    ], JSON_PRETTY_PRINT);
 }
 ?>
