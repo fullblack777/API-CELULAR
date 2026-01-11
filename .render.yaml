@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: cybercel-api
+    env: php
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+    startCommand: |
+      php -S 0.0.0.0:$PORT -t .
+    healthCheckPath: /api.php?numero=11999999999
+    envVars:
+      - key: PHP_VERSION
+        value: 8.2
+      - key: PORT
+        value: 10000
