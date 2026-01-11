@@ -1,13 +1,10 @@
-# CYBERCEL API - Configuração compatível com Render
+# Ativar engine de rewrite (se módulo estiver ativo)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ api.php [QSA,L]
+</IfModule>
+
+# Configurações básicas
 DirectoryIndex index.php
-
-# Ativar rewrite engine
-RewriteEngine On
-
-# Se o arquivo ou diretório não existir, redireciona para api.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ api.php [QSA,L]
-
-# CORS headers via PHP (não via .htaccess)
-# Removido Header set porque causa erro no Render
